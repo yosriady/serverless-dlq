@@ -5,15 +5,66 @@
 # uses to deploy your code to your provider of choice
 
 # The `service` block is the name of the service
-service: serverless-boilerplate
+service: serverless-dlq
 
 plugins:
-  - serverless-offline
+  - serverless-plugin-lambda-dead-letter
 
 # The `provider` block defines where your service will be deployed
 provider:
   name: aws
   runtime: nodejs6.10
+  iamRoleStatements: 
+    - Effect: Allow # Allow Functions to send messages to your SQS DLQ
+      Action:
+        - sqs:SendMessage
+      Resource:
+        - Fn::GetAtt:
+            - CreateUserDeadLetterQueue
+            - Arn
 
 # The `functions` block defines what code to deploy
-# functions:
+functions:
+  createUser:
+    handler: functions/createUser.handler
+    events:
+      - sns: createUser-sns-topic # Async SNS trigger
+    deadLetter:
+      targetArn:
+        GetResourceArn: CreateUserDeadLetterQueue # Point to DLQ ARN
+        tracing: Active
+
+resources:
+  Resources:
+    CreateUserDeadLetterQueue: # Define new SQS resource which is our DLQ
+      Type: AWS::SQS::Queue
+      Properties:
+        MessageRetentionPeriod: 1209600 # 2 Weeks which is the maximum value
+        QueueName: createUser-dlq
+
+    CreateUserDeadLetterQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - Ref: CreateUserDeadLetterQueue
+        PolicyDocument:
+          Id:
+            Fn::GetAtt:
+              - CreateUserDeadLetterQueue
+              - QueueName
+          Version: '2012-10-17'
+          Statement:
+            - Sid: Allow-Lambda-SendMessage
+              Effect: Allow
+              Principal:
+                 AWS: '*'
+              Action:
+                - sqs:SendMessage
+              Resource:
+                Ref: CreateUserDeadLetterQueue
+              Condition:
+                ArnEquals:
+                  aws:SourceArn:
+                    Fn::GetAtt:
+                      - CreateUserLambdaFunction
+                      - Arn

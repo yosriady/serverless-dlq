@@ -360,6 +360,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bluebird@^3.4.7:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
+
 boom@3.X.X, boom@3.x.x:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/boom/-/boom-3.2.2.tgz#0f0cc5d04adc5003b8c7d71f42cca7271fef0e78"
@@ -2541,6 +2545,12 @@ serverless-offline@^3.15.0:
     jsonwebtoken "^7.4.3"
     lodash "^4.17.4"
     velocityjs "^0.9.3"
+
+serverless-plugin-lambda-dead-letter@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-lambda-dead-letter/-/serverless-plugin-lambda-dead-letter-1.2.1.tgz#cdd7bcbb6632636832b012a89f9d6aa1ef571e27"
+  dependencies:
+    bluebird "^3.4.7"
 
 set-blocking@^2.0.0:
   version "2.0.0"

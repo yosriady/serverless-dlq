@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.131.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "serverless-plugin-lambda-dead-letter": "^1.2.1"
   }
 }
