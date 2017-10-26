@@ -32,7 +32,6 @@ functions:
     deadLetter:
       targetArn:
         GetResourceArn: CreateUserDeadLetterQueue # Point to DLQ ARN
-        tracing: Active
 
 resources:
   Resources:
